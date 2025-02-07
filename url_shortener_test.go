@@ -8,12 +8,14 @@ import (
 
 	"github.com/bpoetzschke/go-url-shortner/api"
 	"github.com/bpoetzschke/go-url-shortner/businesslogic"
+	"github.com/bpoetzschke/go-url-shortner/id"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/require"
 )
 
 func TestUrlShortenerCreate(t *testing.T) {
-	shortener := businesslogic.NewShortener()
+	idGenerator := id.NewInMemory(1)
+	shortener := businesslogic.NewShortener(idGenerator)
 	router := mux.NewRouter()
 	api.AddRoutes(router, shortener)
 
@@ -24,5 +26,5 @@ func TestUrlShortenerCreate(t *testing.T) {
 	router.ServeHTTP(requestRecorder, request)
 
 	require.Equal(t, http.StatusCreated, requestRecorder.Code)
-	require.JSONEq(t, `{"url": "/abcd"}`, requestRecorder.Body.String())
+	require.JSONEq(t, `{"url": "/39c4"}`, requestRecorder.Body.String())
 }
