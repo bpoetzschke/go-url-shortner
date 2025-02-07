@@ -1,7 +1,10 @@
 package api
 
-import "github.com/gorilla/mux"
+import (
+	"github.com/bpoetzschke/go-url-shortner/businesslogic"
+	"github.com/gorilla/mux"
+)
 
-func AddRoutes(router *mux.Router) {
-	router.HandleFunc("/create", handleCreate()).Methods("POST")
+func AddRoutes(router *mux.Router, shortener businesslogic.Shortener) {
+	router.HandleFunc("/create", handleCreate(shortener)).Methods("POST")
 }
