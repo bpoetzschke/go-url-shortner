@@ -15,14 +15,19 @@ func handleCreate(shortener businesslogic.Shortener) http.HandlerFunc {
 		err := json.NewDecoder(request.Body).Decode(&createRequestPayload)
 		if err != nil {
 			slog.Error("Error decoding request payload", "err", err)
-			write500Error(responseWriter, "error decoding request payload")
+			write500Response(responseWriter, "error decoding request payload")
+			return
+		}
+
+		if createRequestPayload.URL == "" {
+			write400Response(responseWriter, "empty URL")
 			return
 		}
 
 		shortURL, err := shortener.Create(createRequestPayload.URL)
 		if err != nil {
 			slog.Error("Error creating short URL", "err", err)
-			write500Error(responseWriter, "error creating short URL")
+			write500Response(responseWriter, "error creating short URL")
 			return
 		}
 		responseWriter.Header().Set("Content-Type", "application/json")
@@ -31,8 +36,14 @@ func handleCreate(shortener businesslogic.Shortener) http.HandlerFunc {
 	}
 }
 
-func write500Error(responseWriter http.ResponseWriter, errorMsg string) {
+func write500Response(responseWriter http.ResponseWriter, errorMsg string) {
 	responseWriter.Header().Set("Content-Type", "application/json")
 	responseWriter.WriteHeader(http.StatusInternalServerError)
 	responseWriter.Write([]byte(`{"error": "` + errorMsg + `"}`))
+}
+
+func write400Response(responseWriter http.ResponseWriter, msg string) {
+	responseWriter.Header().Set("Content-Type", "application/json")
+	responseWriter.WriteHeader(http.StatusBadRequest)
+	responseWriter.Write([]byte(`{"msg": "` + msg + `"}`))
 }

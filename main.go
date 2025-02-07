@@ -7,13 +7,15 @@ import (
 	"github.com/bpoetzschke/go-url-shortner/api"
 	"github.com/bpoetzschke/go-url-shortner/businesslogic"
 	"github.com/bpoetzschke/go-url-shortner/id"
+	"github.com/bpoetzschke/go-url-shortner/storage"
 	"github.com/gorilla/mux"
 )
 
 func main() {
 	// TODO init storage
 	idGenerator := id.NewInMemory(1_000_000)
-	shortener := businesslogic.NewShortener(idGenerator)
+	storage := storage.NewInMemory()
+	shortener := businesslogic.NewShortener(idGenerator, storage)
 
 	router := mux.NewRouter()
 	api.AddRoutes(router, shortener)
