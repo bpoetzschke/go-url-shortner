@@ -11,6 +11,7 @@ var base62Map = []rune("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRST
 
 type Shortener interface {
 	Create(longURL string) (string, error)
+	Get(shortURL string) (string, error)
 }
 
 func NewShortener(idGenerator id.Generator, storage storage.Storage) Shortener {
@@ -44,4 +45,12 @@ func (s *shortener) Create(longURL string) (string, error) {
 	}
 
 	return shortURL, nil
+}
+
+func (s *shortener) Get(shortURL string) (string, error) {
+	longURL, err := s.storage.Get(shortURL)
+	if err != nil {
+		return "", err
+	}
+	return longURL, nil
 }

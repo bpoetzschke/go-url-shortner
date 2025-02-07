@@ -7,4 +7,5 @@ import (
 
 func AddRoutes(router *mux.Router, shortener businesslogic.Shortener) {
 	router.HandleFunc("/create", handleCreate(shortener)).Methods("POST")
+	router.HandleFunc("/{shortURL}", handleRedirect(shortener)).Methods("GET")
 }

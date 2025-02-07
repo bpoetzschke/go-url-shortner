@@ -1,5 +1,7 @@
 package storage
 
+import "github.com/bpoetzschke/go-url-shortner/errors"
+
 func NewInMemory() Storage {
 	return &inMemory{
 		data: make(map[string]string),
@@ -18,7 +20,7 @@ func (m *inMemory) Save(longURL string, shortURL string) error {
 func (m *inMemory) Get(shortURL string) (string, error) {
 	longURL, found := m.data[shortURL]
 	if !found {
-		return "", ErrorNotFound
+		return "", errors.ErrorNotFound
 	}
 
 	return longURL, nil
